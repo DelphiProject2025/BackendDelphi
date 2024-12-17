@@ -114,7 +114,7 @@ public class Room
 
         Participants.Add(participant);
     }
-    //hola
+    //hola soy erick
     public void RemoveParticipant(Guid participantId)
     {
         // Busca al participante en la lista de participantes
