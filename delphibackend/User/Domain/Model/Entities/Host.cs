@@ -16,7 +16,8 @@ public class Host
     public Guid Id { get; set; } 
     public Guid AuthUserId { get; set; }
     public DateTime CreatedAt { get; set; } 
-    
+    public bool IsActive { get; set; } // Estado activo/inactivo del Host
+
     public AuthUser? AuthUser { get; set; }
     
 }
