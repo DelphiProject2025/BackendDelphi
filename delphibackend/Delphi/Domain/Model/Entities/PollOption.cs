@@ -5,7 +5,8 @@ public class PollOption
     public Guid Id { get; private set; } // Identificador único de la opción
     public string OptionText { get; private set; } // Texto de la opción
     public int Votes { get; private set; } // Número de votos que ha recibido la opción
-
+    public Poll Poll { get; private set; }
+    public Guid PollId { get; set; }
     public PollOption(string optionText)
     {
         if (string.IsNullOrWhiteSpace(optionText))

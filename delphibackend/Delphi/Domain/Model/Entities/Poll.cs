@@ -65,4 +65,17 @@ public class Poll
 
         IsActive = false;
     }
+    
+    public void Vote(Guid optionId)
+    {
+        var option = Options.FirstOrDefault(o => o.Id == optionId);
+
+        if (option == null)
+        {
+            throw new InvalidOperationException("Option not found.");
+        }
+
+        option.Vote();
+    }
+
 }

@@ -1,4 +1,5 @@
-﻿    using delphibackend.IAM.Domain.Model.Aggregates;
+﻿    using delphibackend.Delphi.Domain.Model.Aggregates;
+    using delphibackend.IAM.Domain.Model.Aggregates;
 
     namespace delphibackend.User.Domain.Model.Entities;
 
@@ -22,7 +23,7 @@
         public bool IsAnonymous { get; set; } // Si participa de forma anónima
         public bool IsActive { get; set; } // Estado del participante
         public DateTime JoinedAt { get; set; } // Fecha y hora de ingreso
-        //hola soy erick
-
+        public Guid RoomId { get; set; } // Clave foránea hacia Room
+        public ICollection<Room> Rooms { get; set; } = new List<Room>();
 
     }

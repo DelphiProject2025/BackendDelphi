@@ -10,7 +10,7 @@ public class Question
     public Participant participant { get; private set; }
     
     public Guid RoomId { get; private set; }
-    public Room room { get; private set; }
+    public Room Room { get; private set; }
     
     public string Text { get; private set; }
     public string? Answer { get; private set; }
@@ -24,9 +24,9 @@ public class Question
             throw new ArgumentNullException(nameof(participant), "Participant cannot be null.");
         }
 
-        if (room == null)
+        if (Room == null)
         {
-            throw new ArgumentNullException(nameof(room), "Room cannot be null.");
+            throw new ArgumentNullException(nameof(Room), "Room cannot be null.");
         }
         if (string.IsNullOrWhiteSpace(text))
         {

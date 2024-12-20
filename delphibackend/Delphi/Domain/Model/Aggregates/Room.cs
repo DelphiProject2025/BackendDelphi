@@ -13,14 +13,19 @@ public class Room
     public string Password { get; private set; } // Contraseña o PIN visible para los participantes
     public Guid HostId { get; set; }
     public Host Host { get; internal set; }
-   //public Guid? SharedFileId {get; set;}
-   //public SharedFile SharedFile {get; set;}
-   //public Guid? ChatId {get; set;}
-   //public Chat Chat {get;set;}
+    public Guid? SharedFileId {get; set;}
+    public SharedFile? SharedFile {get; set;}
+    public Guid? ChatId {get; set;}
+    public SessionRecording? SessionRecording { get; set; }
+    public Guid? SessionRecordingId { get; set; }
+    public Chat Chat {get;set;}
     public ICollection<Participant> Participants { get;  set; } = new List<Participant>();
-    //private readonly List<Question> _questions = new List<Question>();
-    //public IReadOnlyList<Question> Questions => _questions.AsReadOnly();
+    private readonly List<Question> _questions = new List<Question>();
+    public IReadOnlyList<Question> Questions => _questions.AsReadOnly();
 
+    public ICollection<Poll> Polls { get; private set; } = new List<Poll>();
+
+    public Room(){}
     public Room(string name, AuthUser user)
     {
         Id = Guid.NewGuid();
@@ -29,10 +34,9 @@ public class Room
         Password = GenerateRandomPassword();
         Host = new Host(user.Id);
         HostId = Host.Id;
-        //SharedFile = new SharedFile();
-        //Chat = new Chat();
-        
-        
+        SharedFile = new SharedFile();
+        Chat = new Chat();
+
     }
     
     private string GenerateRandomPassword()
@@ -42,7 +46,7 @@ public class Room
         return new string(Enumerable.Repeat(chars, 8).Select(s => s[random.Next(s.Length)]).ToArray());
     }
     
-    /*public void UploadFile(byte[] content)
+    public void UploadFile(byte[] content)
     {
         if (SharedFile == null)
         {
@@ -92,7 +96,7 @@ public class Room
     {
         return SharedFile?.Content;
     }
-*/
+
     public void AddParticipant(AuthUser user, bool isAnonymous = false)
     {
         if (user == null)
@@ -128,5 +132,41 @@ public class Room
         // Elimina al participante de la lista
         Participants.Remove(participant);
     }
+    
+    public void CreatePoll(string question, List<string> options)
+    {
+        if (string.IsNullOrWhiteSpace(question))
+        {
+            throw new ArgumentException("Question cannot be empty.", nameof(question));
+        }
+
+        if (options == null || options.Count < 2)
+        {
+            throw new ArgumentException("Poll must have at least two options.", nameof(options));
+        }
+
+        if (Polls.Any(p => p.Question == question))
+        {
+            throw new InvalidOperationException("A poll with the same question already exists in this room.");
+        }
+
+        var poll = new Poll(this, Host, question, options);
+        Polls.Add(poll);
+    }
+
+
+    // Método para cerrar una encuesta
+    public void ClosePoll(Guid pollId)
+    {
+        var poll = Polls.FirstOrDefault(p => p.Id == pollId);
+
+        if (poll == null)
+        {
+            throw new InvalidOperationException("Poll not found.");
+        }
+
+        poll.ClosePoll();
+    }
+
 
 }
