@@ -26,7 +26,7 @@ using delphibackend.User.Application.Internal.CommandServices;
 using delphibackend.User.Application.Internal.QueryServices;
 using delphibackend.User.Domain.Repositories;
 using delphibackend.User.Domain.Services;
-using delphibackend.User.Infrastructure.Persistence.EFC.Repositories;
+using delphibackend.User.Infrastructure.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -144,6 +144,8 @@ builder.Services.AddScoped<IParticipantRepository, ParticipantRepository>();
 builder.Services.AddScoped<IParticipantQueryService, ParticipantQueryService>();
 builder.Services.AddScoped<IParticipantCommandService, ParticipantCommandService>();
 builder.Services.AddScoped<IHostRepository, HostRepository>();
+builder.Services.AddScoped<IHostCommandService, HostCommandService>();
+builder.Services.AddScoped<IHostQueryService, HostQueryService>();
 
 
 
