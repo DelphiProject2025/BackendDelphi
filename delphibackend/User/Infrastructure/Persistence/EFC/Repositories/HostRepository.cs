@@ -53,9 +53,9 @@ namespace delphibackend.User.Infrastructure.Repositories
 
         public async Task AddAsync(Host host)
         {
-            await _context.Host.AddAsync(host);
+            await _context.Host.AddAsync(host); 
+            await _context.SaveChangesAsync(); 
         }
-
         public void Update(Host host)
         {
             _context.Host.Update(host);

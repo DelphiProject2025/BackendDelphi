@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("delphibackend")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3116d6c5ca9a62d7227529dc25bcc74d6ad36a6a")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9484c3b9429bf36c23e098ebee5a378770b8afbc")]
 [assembly: System.Reflection.AssemblyProductAttribute("delphibackend")]
 [assembly: System.Reflection.AssemblyTitleAttribute("delphibackend")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -19,7 +19,7 @@ public class HostCommandService : IHostCommandService
         var host = new Host
         {
             AuthUserId = authUserId,
-            IsActive = true, // Por defecto activo al crearse
+            IsActive = true, 
             CreatedAt = DateTime.UtcNow
         };
 
