@@ -11,5 +11,6 @@ namespace delphibackend.User.Domain.Repositories
         Task UpdateAsync(Host host); // Actualizar un Host existente
         Task DeleteAsync(Guid id); // Eliminar un Host
         Task<bool> ExistsByAuthUserIdAsync(Guid authUserId); // Verificar si ya existe un Host
+        Task<Host?> FindByAuthUserIdAsync(Guid authUserId);
     }
 }
