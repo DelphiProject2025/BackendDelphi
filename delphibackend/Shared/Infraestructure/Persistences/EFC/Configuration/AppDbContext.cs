@@ -29,7 +29,7 @@ namespace delphibackend.Shared.Infraestructure.Persistences.EFC.Configuration
         public DbSet<Host> Host { get; set; }
         public DbSet<Participant> Participant { get; set; }
         public DbSet<Room> Room { get; set; }
-        public DbSet<Chat> Chats { get; set; }
+        public DbSet<Chat> Chat { get; set; }
         public DbSet<Poll> Polls { get; set; }
         public DbSet<PollOption> PollOption { get; set; }
         public DbSet<Question> Questions { get; set; }
@@ -39,7 +39,7 @@ namespace delphibackend.Shared.Infraestructure.Persistences.EFC.Configuration
         {
             base.OnModelCreating(builder);
 
-            // IAM Bounded Context
+            // Configuración de la entidad AuthUser
             builder.Entity<AuthUser>().HasKey(u => u.Id);
             builder.Entity<AuthUser>().Property(u => u.Id).IsRequired()
                 .ValueGeneratedOnAdd();
@@ -48,27 +48,30 @@ namespace delphibackend.Shared.Infraestructure.Persistences.EFC.Configuration
                 .IsUnique()
                 .HasDatabaseName("IX_AuthUser_Email");
             builder.Entity<AuthUser>().Property(u => u.PasswordHash).IsRequired();
+            
+            // Configuración de la entidad Host
+            builder.Entity<Host>(host =>
+            {
+                host.HasKey(h => h.Id);
+                host.Property(h => h.Id).IsRequired().ValueGeneratedOnAdd();
+                host.HasOne(h => h.AuthUser)
+                    .WithOne(a => a.Host)
+                    .HasForeignKey<Host>(h => h.AuthUserId)
+                    .HasPrincipalKey<AuthUser>(a => a.Id);
+            });
 
-            // USER Bounded Context
-            builder.Entity<Host>().HasKey(h => h.Id);
-            builder.Entity<Host>().Property(h => h.Id).IsRequired()
-                .ValueGeneratedOnAdd();
-            builder.Entity<Host>()
-                .HasOne(h => h.AuthUser)
-                .WithOne(a => a.Host)
-                .HasForeignKey<Host>(h => h.AuthUserId)
-                .HasPrincipalKey<IAM.Domain.Model.Aggregates.AuthUser>(a => a.Id);
-            
-            builder.Entity<Participant>().HasKey(p => p.Id);
-            builder.Entity<Participant>().Property(p => p.Id).IsRequired()
-                .ValueGeneratedOnAdd();
-            builder.Entity<Participant>()
-                .HasOne(p => p.AuthUser)
-                .WithOne(a => a.Participant)
-                .HasForeignKey<Participant>(p => p.AuthUserId)
-                .HasPrincipalKey<IAM.Domain.Model.Aggregates.AuthUser>(a => a.Id);
-            
-            // ROOM 
+         // Configuración de la entidad Participant
+            builder.Entity<Participant>(participant =>
+            {
+                participant.HasKey(p => p.Id);
+                participant.Property(p => p.Id).IsRequired().ValueGeneratedOnAdd();
+                participant.HasOne(p => p.AuthUser)
+                    .WithOne(a => a.Participant)
+                    .HasForeignKey<Participant>(p => p.AuthUserId)
+                    .HasPrincipalKey<AuthUser>(a => a.Id);
+            });
+
+    // Configuración de la entidad Room
             builder.Entity<Room>(room =>
             {
                 room.ToTable("Rooms");
@@ -78,48 +81,63 @@ namespace delphibackend.Shared.Infraestructure.Persistences.EFC.Configuration
                 room.Property(r => r.Password).IsRequired(false);
                 room.Property(r => r.HostId).IsRequired();
 
-                // Relación con Host
                 room.HasOne(r => r.Host)
                     .WithMany()
                     .HasForeignKey(r => r.HostId)
                     .OnDelete(DeleteBehavior.Restrict)
                     .HasConstraintName("FK_Room_Host");
-                
-                room.HasMany(r => r.Participants)
-                    .WithMany(p => p.Rooms) // Necesitas agregar esta propiedad en Participant
-                    .UsingEntity(j => j.ToTable("RoomParticipants")); // Tabla intermedia
 
-                // Relación con SharedFile (uno a uno)
+                room.HasMany(r => r.Participants)
+                    .WithMany(p => p.Rooms)
+                    .UsingEntity(j => j.ToTable("RoomParticipants"));
+
                 room.HasOne(r => r.SharedFile)
                     .WithOne()
                     .HasForeignKey<Room>(r => r.SharedFileId)
                     .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("FK_Room_SharedFile");
 
-                // Relación con Questions (uno a muchos)
                 room.HasMany(r => r.Questions)
                     .WithOne(q => q.Room)
                     .HasForeignKey(q => q.RoomId)
                     .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("FK_Room_Questions");
 
-                // Relación con Polls (uno a muchos)
                 room.HasMany(r => r.Polls)
                     .WithOne(p => p.Room)
                     .HasForeignKey(p => p.RoomId)
                     .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("FK_Room_Polls");
 
-                // Relación con SessionRecording (uno a uno)
                 room.HasOne(r => r.SessionRecording)
                     .WithOne(sr => sr.Room)
                     .HasForeignKey<SessionRecording>(sr => sr.RoomId)
                     .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("FK_Room_SessionRecording");
-
+                
+                room.HasOne(r => r.Chat)
+                    .WithOne(c => c.Room) // Define la propiedad inversa en Chat
+                    .HasForeignKey<Room>(r => r.ChatId)
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .HasConstraintName("FK_Room_Chat");
             });
             
-            // **Configuración de Question**
+            // Configuración de la entidad Chat
+            builder.Entity<Chat>(chat =>
+            {
+                chat.ToTable("Chats");
+                chat.HasKey(c => c.Id);
+                chat.Property(c => c.Id).IsRequired();
+
+                // Relación uno a uno con Room
+                chat.HasOne(c => c.Room)
+                    .WithOne(r => r.Chat)
+                    .HasForeignKey<Chat>(c => c.RoomId)
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .HasConstraintName("FK_Chat_Room");
+            });
+            
+            // Configuración de la entidad Question
             builder.Entity<Question>(question =>
             {
                 question.ToTable("Questions");
@@ -128,22 +146,20 @@ namespace delphibackend.Shared.Infraestructure.Persistences.EFC.Configuration
                 question.Property(q => q.Answer).IsRequired(false);
                 question.Property(q => q.Likes).IsRequired();
 
-                // Relación con Room
                 question.HasOne(q => q.Room)
                     .WithMany(r => r.Questions)
                     .HasForeignKey(q => q.RoomId)
                     .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("FK_Question_Room");
 
-                // Relación con Participant
                 question.HasOne(q => q.participant)
                     .WithMany()
                     .HasForeignKey(q => q.ParticipantId)
                     .OnDelete(DeleteBehavior.Restrict)
                     .HasConstraintName("FK_Question_Participant");
             });
-            
-            // **Configuración de Poll**
+
+            // Configuración de la entidad Poll
             builder.Entity<Poll>(poll =>
             {
                 poll.ToTable("Polls");
@@ -152,14 +168,12 @@ namespace delphibackend.Shared.Infraestructure.Persistences.EFC.Configuration
                 poll.Property(p => p.IsActive).IsRequired();
                 poll.Property(p => p.CreatedAt).IsRequired();
 
-                // Relación con Room
                 poll.HasOne(p => p.Room)
                     .WithMany(r => r.Polls)
                     .HasForeignKey(p => p.RoomId)
                     .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("FK_Poll_Room");
 
-                // Relación con Host
                 poll.HasOne(p => p.Host)
                     .WithMany()
                     .HasForeignKey(p => p.HostId)
@@ -167,7 +181,7 @@ namespace delphibackend.Shared.Infraestructure.Persistences.EFC.Configuration
                     .HasConstraintName("FK_Poll_Host");
             });
 
-            // **Configuración de PollOption**
+            // Configuración de la entidad PollOption
             builder.Entity<PollOption>(pollOption =>
             {
                 pollOption.ToTable("PollOptions");
@@ -175,53 +189,39 @@ namespace delphibackend.Shared.Infraestructure.Persistences.EFC.Configuration
                 pollOption.Property(po => po.OptionText).IsRequired();
                 pollOption.Property(po => po.Votes).IsRequired();
 
-                // Relación con Poll
                 pollOption.HasOne(po => po.Poll)
                     .WithMany(p => p.Options)
                     .HasForeignKey(po => po.PollId)
                     .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("FK_PollOption_Poll");
             });
-            
-            // **Configuración de SessionRecording**
+
+            // Configuración de la entidad SessionRecording
             builder.Entity<SessionRecording>(recording =>
             {
                 recording.ToTable("SessionRecordings");
                 recording.HasKey(sr => sr.Id);
+                recording.Property(sr => sr.RecordingUrl).IsRequired().HasMaxLength(500);
+                recording.Property(sr => sr.StartDateTime).IsRequired();
+                recording.Property(sr => sr.EndDateTime).IsRequired(false);
+                recording.Property(sr => sr.FileSize).IsRequired();
 
-                recording.Property(sr => sr.RecordingUrl)
-                    .IsRequired()
-                    .HasMaxLength(500); // Puedes ajustar la longitud máxima según sea necesario
-
-                recording.Property(sr => sr.StartDateTime)
-                    .IsRequired();
-
-                recording.Property(sr => sr.EndDateTime)
-                    .IsRequired(false);
-
-                recording.Property(sr => sr.FileSize)
-                    .IsRequired();
-
-                // Relación uno a uno con Room
                 recording.HasOne(sr => sr.Room)
                     .WithOne(r => r.SessionRecording)
                     .HasForeignKey<SessionRecording>(sr => sr.RoomId)
                     .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("FK_SessionRecording_Room");
             });
-            
-            // **Configuración de SharedFile**
+
+            // Configuración de la entidad SharedFile
             builder.Entity<SharedFile>(sharedFile =>
             {
                 sharedFile.ToTable("SharedFiles");
                 sharedFile.HasKey(sf => sf.Id);
                 sharedFile.Property(sf => sf.Id).IsRequired();
                 sharedFile.Property(sf => sf.Content).IsRequired(false);
-                
             });
-
-    }
-        
-        
+    
+        }
     }
 }

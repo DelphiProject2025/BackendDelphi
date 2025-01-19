@@ -345,3 +345,4 @@ C:\BackendDelphi\delphibackend\obj\Debug\net8.0\refint\delphibackend.dll
 C:\BackendDelphi\delphibackend\obj\Debug\net8.0\delphibackend.pdb
 C:\BackendDelphi\delphibackend\obj\Debug\net8.0\delphibackend.genruntimeconfig.cache
 C:\BackendDelphi\delphibackend\obj\Debug\net8.0\ref\delphibackend.dll
+C:\delphibackend\delphibackend\obj\Debug\net8.0\delphibackend.sourcelink.json
