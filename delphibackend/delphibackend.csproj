@@ -33,11 +33,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Delphi\Application\Internal\CommandServices\" />
       <Folder Include="Delphi\Application\Internal\QueryServices\" />
-      <Folder Include="Delphi\Infrastructure\Persistence\EFC\Repositories\" />
-      <Folder Include="Delphi\Interfaces\Controllers\" />
-      <Folder Include="Delphi\Interfaces\Resources\" />
       <Folder Include="Delphi\Interfaces\Transform\" />
     </ItemGroup>
 

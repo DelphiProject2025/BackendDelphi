@@ -28,8 +28,8 @@ namespace delphibackend.Shared.Infraestructure.Persistences.EFC.Configuration
         public DbSet<AuthUser> AuthUsers { get; set; }
         public DbSet<Host> Host { get; set; }
         public DbSet<Participant> Participant { get; set; }
-        public DbSet<Room> Room { get; set; }
-        public DbSet<Chat> Chat { get; set; }
+        public DbSet<Room> Rooms { get; set; }
+        public DbSet<Chat> Chats { get; set; }
         public DbSet<Poll> Polls { get; set; }
         public DbSet<PollOption> PollOption { get; set; }
         public DbSet<Question> Questions { get; set; }
