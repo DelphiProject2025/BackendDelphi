@@ -1,33 +1,48 @@
-﻿using delphibackend.IAM.Domain.Repositories;
+﻿using delphibackend.IAM.Domain.Model.Aggregates;
 using delphibackend.Shared.Infraestructure.Persistences.EFC.Configuration;
 using delphibackend.Shared.Infraestructure.Persistences.EFC.Repositories;
 using Microsoft.EntityFrameworkCore;
 
-namespace delphibackend.IAM.Infraestructure.Persistence.EFC.Repositories;
+namespace delphibackend.IAM.Domain.Repositories;
 
-public class AuthUserRepository(AppDbContext context) : BaseRepository<Domain.Model.Aggregates.AuthUser>(context), IAuthUserRepository
+public class AuthUserRepository : BaseRepository<AuthUser>, IAuthUserRepository
 {
-    /**
-     * <summary>
-     *     Find a user by username
-     * </summary>
-     * <param name="email">The username to search</param>
-     * <returns>The user</returns>
-     */
-    public async Task<Domain.Model.Aggregates.AuthUser?> FindByEmailAsync(string email)
+    private readonly AppDbContext _context;
+
+    public AuthUserRepository(AppDbContext context) : base(context)
     {
-        return await Context.Set<Domain.Model.Aggregates.AuthUser>().FirstOrDefaultAsync(user => user.Email.Equals(email));
+        _context = context; // Inicializa el contexto
     }
 
-    /**
-     * <summary>
-     *     Check if a user exists by email
-     * </summary>
-     * <param name="email">The username to search</param>
-     * <returns>True if the user exists, false otherwise</returns>
-     */
+    /// <summary>
+    /// Encuentra un usuario por su correo electrónico
+    /// </summary>
+    /// <param name="email">El correo electrónico del usuario</param>
+    /// <returns>El usuario si es encontrado</returns>
+    public async Task<AuthUser?> FindByEmailAsync(string email)
+    {
+        return await _context.Set<AuthUser>()
+            .FirstOrDefaultAsync(user => user.Email.Equals(email));
+    }
+
+    /// <summary>
+    /// Encuentra un usuario por su ID
+    /// </summary>
+    /// <param name="id">El ID del usuario</param>
+    /// <returns>El usuario si es encontrado</returns>
+    public async Task<AuthUser?> FindByIdAsync(Guid id)
+    {
+        return await _context.Set<AuthUser>()
+            .FirstOrDefaultAsync(user => user.Id == id);
+    }
+
+    /// <summary>
+    /// Verifica si un usuario existe por su correo electrónico
+    /// </summary>
+    /// <param name="email">El correo electrónico del usuario</param>
+    /// <returns>True si existe, False en caso contrario</returns>
     public bool ExistsByEmail(string email)
     {
-        return Context.Set<Domain.Model.Aggregates.AuthUser>().Any(user => user.Email.Equals(email));
+        return _context.Set<AuthUser>().Any(user => user.Email.Equals(email));
     }
 }

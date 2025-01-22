@@ -5,41 +5,33 @@ using delphibackend.Delphi.Domain.Repositories;
 using delphibackend.Delphi.Domain.Services;
 using delphibackend.IAM.Domain.Repositories;
 using delphibackend.Shared.Domain.Repositories;
+using delphibackend.User.Domain.Repositories;
 
 namespace delphibackend.Delphi.Application.Internal.CommandServices;
 
 public class RoomCommandService(
     IRoomRepository _roomRepository,
     IAuthUserRepository _authUserRepository,
+    IHostRepository _hostRepository,
+    
     IUnitOfWork unitOfWork
     ) : IRoomCommandService
 {
     public async Task<Room?> Handle(CreateRoomCommand command)
     {
-        var host = await _authUserRepository .FindByIdAsync(command.HostId);
+        // Usa HostRepository para buscar el host
+        var host = await _hostRepository.FindByIdAsync(command.HostId);
         if (host == null)
+        {
             throw new Exception("Host not found");
+        }
 
-        var room = new Room(command.Name, host);
+        var room = new Room(command.RoomName, host);
         await _roomRepository.AddAsync(room);
         await unitOfWork.CompleteAsync();
         return room;
     }
-
-    public async Task<Room?> Handle(AddParticipantToRoomCommand command)
-    {
-        var room = await _roomRepository.GetRoomWithUsersAsync(command.RoomId);
-        if (room == null)
-            throw new Exception("Room not found");
-
-        var participant = await _authUserRepository .FindByIdAsync(command.ParticipantId);
-        if (participant == null)
-            throw new Exception("Participant not found");
-
-        room.AddParticipant(participant);
-        await _roomRepository.SaveAsync();
-        return room;
-    }
+    
 
     public async Task<Room?> Handle(StartRoomCommand command)
     {
@@ -53,6 +45,11 @@ public class RoomCommandService(
         return room;
     }
 
+    public Task<Room?> Handle(AddParticipantToRoomCommand command)
+    {
+        throw new NotImplementedException();
+    }
+
     public async Task<Room?> Handle(EndRoomCommand command)
     {
         var room = await _roomRepository.FindByIdAsync(command.RoomId);
@@ -64,6 +61,32 @@ public class RoomCommandService(
         await unitOfWork.CompleteAsync();
         return room;
     }
+    public async Task<Room?> Handle(AddHostToRoomCommand command)
+    {
+        // Buscar la sala
+        var room = await _roomRepository.FindByIdAsync(command.RoomId);
+        if (room == null)
+            throw new Exception("Room not found");
+
+        // Buscar el usuario autenticado que será el Host
+        var authUser = await _authUserRepository.FindByIdAsync(command.HostId);
+        if (authUser == null)
+            throw new Exception("AuthUser not found");
+
+        // Crear una nueva instancia de Host usando el constructor
+        var host = new delphibackend.User.Domain.Model.Entities.Host(authUser);
+
+        // Asignar el Host a la sala
+        room.Host = host;
+
+        // Guardar cambios
+        await _roomRepository.UpdateAsync(room);
+        await unitOfWork.CompleteAsync();
+
+        return room;
+    }
+
+
 
     public async Task<bool> Handle(CheckIfActivatedCommand command)
     {

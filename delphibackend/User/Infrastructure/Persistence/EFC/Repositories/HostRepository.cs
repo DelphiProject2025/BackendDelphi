@@ -22,7 +22,7 @@ namespace delphibackend.User.Infrastructure.Repositories
 
         public async Task<Host?> FindByIdAsync(Guid id)
         {
-            return await _context.Host.FindAsync(id);
+            return await _context.Host.FirstOrDefaultAsync(h => h.Id == id);
         }
 
         public async Task<Host?> FindByAuthUserIdAsync(Guid authUserId)

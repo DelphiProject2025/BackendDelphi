@@ -5,7 +5,6 @@ using delphibackend.IAM.Application.Internal.QueryServices;
 using delphibackend.IAM.Domain.Repositories;
 using delphibackend.IAM.Domain.Services;
 using delphibackend.IAM.Infraestructure.Hashing.BCrypt.Services;
-using delphibackend.IAM.Infraestructure.Persistence.EFC.Repositories;
 using delphibackend.IAM.Infraestructure.Pipeline.Middleware.Extensions;
 using delphibackend.IAM.Infraestructure.Tokens.JWT.Configurations;
 using delphibackend.IAM.Infraestructure.Tokens.JWT.Services;
@@ -22,6 +21,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
+using delphibackend.Delphi.Application.Internal.CommandServices;
+using delphibackend.Delphi.Application.Internal.Queryservices;
+using delphibackend.Delphi.Domain.Repositories;
+using delphibackend.Delphi.Domain.Services;
+using delphibackend.Delphi.Infrastructure.Persistence.EFC.Repositories;
 using delphibackend.User.Application.Internal.CommandServices;
 using delphibackend.User.Application.Internal.QueryServices;
 using delphibackend.User.Domain.Repositories;
@@ -64,9 +68,13 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 });
 
 builder.Services.AddControllers(options =>
-{
-    options.Conventions.Add(new KebabCaseRouteNamingConvention());
-});
+    {
+        options.Conventions.Add(new KebabCaseRouteNamingConvention());
+    })
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
+    });
 
 // Configurar opciones de enrutamiento
 builder.Services.AddRouting(options =>
@@ -146,7 +154,9 @@ builder.Services.AddScoped<IParticipantCommandService, ParticipantCommandService
 builder.Services.AddScoped<IHostRepository, HostRepository>();
 builder.Services.AddScoped<IHostCommandService, HostCommandService>();
 builder.Services.AddScoped<IHostQueryService, HostQueryService>();
-
+builder.Services.AddScoped<IRoomCommandService, RoomCommandService>();
+builder.Services.AddScoped<IRoomRepository, RoomRepository>();
+builder.Services.AddScoped<IRoomQueryService, RoomQueryService>();
 
 
 

@@ -25,19 +25,24 @@ public class Room
 
     public ICollection<Poll> Polls { get; private set; } = new List<Poll>();
 
-    public Room(){}
-    public Room(string name, AuthUser user)
+ 
+    public Room(string name, Host host)
     {
         Id = Guid.NewGuid();
         RoomName = name;
-        Roomstarted = false;
         Password = GenerateRandomPassword();
-        Host = new Host(user.Id);
-        HostId = Host.Id;
+        Host = host;
+        HostId = host.Id;
         SharedFile = new SharedFile();
         Chat = new Chat();
-
     }
+    public Room()
+    {
+        Participants = new List<Participant>();
+        _questions = new List<Question>();
+        Polls = new List<Poll>();
+    }
+
     
     private string GenerateRandomPassword()
     {
@@ -45,6 +50,7 @@ public class Room
         var random = new Random();
         return new string(Enumerable.Repeat(chars, 8).Select(s => s[random.Next(s.Length)]).ToArray());
     }
+
     
     public void UploadFile(byte[] content)
     {

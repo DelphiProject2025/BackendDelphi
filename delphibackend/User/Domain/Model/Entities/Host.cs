@@ -12,6 +12,12 @@ public class Host
     {
         Id = id;
     }
+    public Host(AuthUser authUser) : this()
+    {
+        AuthUserId = authUser.Id;
+        AuthUser = authUser;
+        IsActive = true; // Configurar como activo por defecto
+    }
 
     public Guid Id { get; set; } 
     public Guid AuthUserId { get; set; }

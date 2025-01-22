@@ -8,8 +8,7 @@ public interface IRoomRepository : IBaseRepository<Room>
 {
     Task<Room?> FindByIdAsync(Guid id);
     Task<Room?> FindByNameAsync(string roomName);
-    Task<Room?> GetRoomWithUsersAsync(Guid roomId);
-    Task<IEnumerable<Participant>> GetParticipantsByRoomIdAsync(Guid roomId);
+    Task<Room?> GetRoomWithHostsAsync(Guid roomId);
 
     Task SaveAsync();
 }

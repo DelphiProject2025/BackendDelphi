@@ -23,10 +23,11 @@ public class RoomQueryService(IRoomRepository roomRepository) : IRoomQueryServic
         return await _roomRepository.FindByNameAsync(query.RoomName);
     }
 
-    public async Task<IEnumerable<Participant>> Handle(GetParticipantsByRoomIdQuery query)
+    public Task<IEnumerable<Participant>> Handle(GetParticipantsByRoomIdQuery query)
     {
-        return await _roomRepository.GetParticipantsByRoomIdAsync(query.RoomId);
+        throw new NotImplementedException();
     }
+
 
     public async Task SaveChangesAsync()
     {

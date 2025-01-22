@@ -13,11 +13,13 @@ public class RoomRepository(AppDbContext context) : BaseRepository<Room>(context
     private readonly AppDbContext _context;
 
     // Find Room by Id
-    public new async Task<Room?> FindByIdAsync(Guid id)
+    public async Task<Room?> FindByIdAsync(Guid roomId)
     {
         return await _context.Rooms
-            .FirstOrDefaultAsync(r => r.Id == id);
+            .Include(r => r.Host) // Incluir la relación con Host
+            .FirstOrDefaultAsync(r => r.Id == roomId);
     }
+
 
     // Find Room by Name
     public async Task<Room?> FindByNameAsync(string roomName)
@@ -27,22 +29,15 @@ public class RoomRepository(AppDbContext context) : BaseRepository<Room>(context
     }
 
     // Get Room with Users
-    public async Task<Room?> GetRoomWithUsersAsync(Guid roomId)
+    public async Task<Room?> GetRoomWithHostsAsync(Guid roomId)
     {
         return await _context.Rooms
-            .Include(r => r.Participants)
+            .Include(r => r.Host)
             .FirstOrDefaultAsync(r => r.Id == roomId);
     }
 
     // Get Participants by Room Id
-    public async Task<IEnumerable<Participant>> GetParticipantsByRoomIdAsync(Guid roomId)
-    {
-        return await _context.Rooms
-            .Where(r => r.Id == roomId)
-            .SelectMany(r => r.Participants)
-            .ToListAsync();
-    }
-
+    
     // Save changes to the database
     public async Task SaveAsync()
     {

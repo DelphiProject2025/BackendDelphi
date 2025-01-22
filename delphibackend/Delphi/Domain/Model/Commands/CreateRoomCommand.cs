@@ -1,3 +1,3 @@
 ﻿namespace delphibackend.Delphi.Domain.Model.Commands;
 
-public record CreateRoomCommand(string Name,Guid HostId);
+public record CreateRoomCommand(string RoomName,Guid HostId);
