@@ -23,9 +23,11 @@ using Microsoft.OpenApi.Models;
 using System.Text;
 using delphibackend.Delphi.Application.Internal.CommandServices;
 using delphibackend.Delphi.Application.Internal.Queryservices;
+using delphibackend.Delphi.Domain.Model.Repositories;
 using delphibackend.Delphi.Domain.Repositories;
 using delphibackend.Delphi.Domain.Services;
 using delphibackend.Delphi.Infrastructure.Persistence.EFC.Repositories;
+using delphibackend.Delphi.Interfaces.Hubs;
 using delphibackend.User.Application.Internal.CommandServices;
 using delphibackend.User.Application.Internal.QueryServices;
 using delphibackend.User.Domain.Repositories;
@@ -135,7 +137,7 @@ builder.Services.AddSwaggerGen(c =>
         }
     });
 });
-
+builder.Services.AddSignalR();
 // Configurar servicios personalizados
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.Configure<TokenSettings>(builder.Configuration.GetSection("TokenSettings"));
@@ -154,7 +156,8 @@ builder.Services.AddScoped<IHostQueryService, HostQueryService>();
 builder.Services.AddScoped<IRoomCommandService, RoomCommandService>();
 builder.Services.AddScoped<IRoomRepository, RoomRepository>();
 builder.Services.AddScoped<IRoomQueryService, RoomQueryService>();
-
+builder.Services.AddScoped<IChatRepository,ChatRepository>();
+builder.Services.AddScoped<IChatCommandService, ChatCommandService>();
 
 
 
@@ -184,6 +187,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.MapHub<ChatHub>("/chatHub");
+
 app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();

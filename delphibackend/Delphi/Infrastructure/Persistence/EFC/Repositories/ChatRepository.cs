@@ -1,11 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using delphibackend.Delphi.Domain.Model.Entities;
+using delphibackend.Delphi.Domain.Model.Repositories;
 using delphibackend.Shared.Domain.Repositories;
 using delphibackend.Shared.Infraestructure.Persistences.EFC.Configuration;
 
 namespace delphibackend.Delphi.Infrastructure.Persistence.EFC.Repositories;
 
-public class ChatRepository : IBaseRepository<Chat>
+public class ChatRepository : IChatRepository
 {
     private readonly AppDbContext _context;
 
