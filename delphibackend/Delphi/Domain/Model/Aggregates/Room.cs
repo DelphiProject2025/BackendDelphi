@@ -1,4 +1,5 @@
-﻿using delphibackend.Delphi.Domain.Model.Entities;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using delphibackend.Delphi.Domain.Model.Entities;
 using delphibackend.IAM.Domain.Model.Aggregates;
 using delphibackend.User.Domain.Model.Entities;
 using Host = delphibackend.User.Domain.Model.Entities.Host;
@@ -12,6 +13,8 @@ public class Room
     public bool Roomstarted { get; set; }
     public string Password { get; private set; } // Contraseña o PIN visible para los participantes
     public Guid HostId { get; set; }
+    [NotMapped]
+
     public Host Host { get; internal set; }
     public Guid? SharedFileId {get; set;}
     public SharedFile? SharedFile {get; set;}
@@ -33,8 +36,6 @@ public class Room
         Password = GenerateRandomPassword();
         Host = host;
         HostId = host.Id;
-        SharedFile = new SharedFile();
-        Chat = new Chat();
     }
     public Room()
     {

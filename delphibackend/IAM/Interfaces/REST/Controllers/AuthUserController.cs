@@ -21,13 +21,13 @@ public class AuthUserController(IAuthUserQueryService authUserQueryService, IAut
      * <summary>
      *     Get user by id endpoint. It allows to get a user by id
      * </summary>
-     * <param name="userId">The user id</param>
+     * <param name="authUserId">The user id</param>
      * <returns>The user resource</returns>
      */
     [HttpGet("{authUserId}")]
-    public async Task<IActionResult> GetAuthUserById(Guid userId)
+    public async Task<IActionResult> GetAuthUserById(Guid authUserId)
     {
-        var getAuthUserByIdQuery = new GetAuthUserByIdQuery(userId);
+        var getAuthUserByIdQuery = new GetAuthUserByIdQuery(authUserId);
         var user = await authUserQueryService.Handle(getAuthUserByIdQuery);
         var userResource = AuthUserResourceFromEntityAssembler.ToResourceFromEntity(user!);
         return Ok(userResource);

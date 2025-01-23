@@ -71,10 +71,7 @@ builder.Services.AddControllers(options =>
     {
         options.Conventions.Add(new KebabCaseRouteNamingConvention());
     })
-    .AddJsonOptions(options =>
-    {
-        options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
-    });
+    ;
 
 // Configurar opciones de enrutamiento
 builder.Services.AddRouting(options =>

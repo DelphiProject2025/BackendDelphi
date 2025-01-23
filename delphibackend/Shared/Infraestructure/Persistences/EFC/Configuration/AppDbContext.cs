@@ -41,8 +41,7 @@ namespace delphibackend.Shared.Infraestructure.Persistences.EFC.Configuration
 
             // Configuración de la entidad AuthUser
             builder.Entity<AuthUser>().HasKey(u => u.Id);
-            builder.Entity<AuthUser>().Property(u => u.Id).IsRequired()
-                .ValueGeneratedOnAdd();
+            builder.Entity<AuthUser>().Property(u => u.Id).IsRequired();
             builder.Entity<AuthUser>()
                 .HasIndex(u => u.Email)
                 .IsUnique()
