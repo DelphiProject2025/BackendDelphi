@@ -6,15 +6,18 @@ namespace delphibackend.Delphi.Interfaces.Transform;
 
 public static class RoomResourceFromEntityAssembler
 {
-    public static RoomResource ToResourceFromEntity(Domain.Model.Aggregates.Room room)
+    public static RoomResource ToResourceFromEntity(Room room)
     {
         return new RoomResource(
             room.Id,
             room.RoomName,
             room.HostId,
-            room.SharedFile,
+            room.Questions,
+            room.Participants,
+            room.SharedFileId,
             room.Chat,
-            room.Roomstarted);
+            room.Roomstarted,
+            room.Password);
 
     }
 }

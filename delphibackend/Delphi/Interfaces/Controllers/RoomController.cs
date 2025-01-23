@@ -38,12 +38,12 @@ public class RoomController(IRoomCommandService roomCommandService, IRoomQuerySe
         return Ok(resources);
     }
 
-    [HttpPost("{hostId:guid}")]
-    public async Task<IActionResult> AddHostToRoom([FromBody] AddHostToRoomResource addHostToRoomResource, [FromRoute] Guid hostId)
+    [HttpPost("{participantId:guid}")]
+    public async Task<IActionResult> AddUserToRoom([FromBody] AddParticipantToRoomResource addParticipantToRoomResource, [FromRoute] Guid participantId)
     {
-        var addHostCommand = AddHostToRoomCommandFromResourceAssembler
-            .ToCommandFromResource(addHostToRoomResource, hostId);
-        var room = await roomCommandService.Handle(addHostCommand);
+        var addParticipantCommand = AddParticipantToRoomCommandFromResourceAssembler
+            .ToCommandFromResource(addParticipantToRoomResource, participantId);
+        var room = await roomCommandService.Handle(addParticipantCommand);
         if (room is null) return BadRequest();
         var resource = RoomResourceFromEntityAssembler.ToResourceFromEntity(room);
         return Ok(resource);

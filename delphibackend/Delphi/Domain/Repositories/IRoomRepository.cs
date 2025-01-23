@@ -6,9 +6,10 @@ namespace delphibackend.Delphi.Domain.Repositories;
 
 public interface IRoomRepository : IBaseRepository<Room>
 {
-    Task<Room?> FindByIdAsync(Guid id);
     Task<Room?> FindByNameAsync(string roomName);
     Task<Room?> GetRoomWithHostsAsync(Guid roomId);
+    Task<IEnumerable<Participant>> GetParticipantsByRoomIdAsync(Guid roomId);
+
 
     Task SaveAsync();
 }

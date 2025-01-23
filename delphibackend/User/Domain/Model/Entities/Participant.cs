@@ -14,6 +14,21 @@
             JoinedAt = DateTime.UtcNow;
         }
         
+        public Participant(Guid id) : this()
+        {
+            Id = id;
+        }
+        
+        public Participant(AuthUser authUser) : this()
+        {
+            AuthUserId = authUser.Id;
+            AuthUser = authUser;
+            IsActive = true; // Configurar como activo por defecto
+            Role = ParticipantRole.Contributor;
+            IsAnonymous = false;
+
+        }
+        
         public Guid Id { get; set; } // Identificador único = Guid.NewGuid();
         public Guid AuthUserId { get; set; } // Identificador del Usuario
 
@@ -23,7 +38,5 @@
         public bool IsAnonymous { get; set; } // Si participa de forma anónima
         public bool IsActive { get; set; } // Estado del participante
         public DateTime JoinedAt { get; set; } // Fecha y hora de ingreso
-        public Guid RoomId { get; set; } // Clave foránea hacia Room
-        public ICollection<Room> Rooms { get; set; } = new List<Room>();
-
+        public Guid? RoomId { get; set; } // Clave foránea hacia Room
     }

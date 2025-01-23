@@ -71,8 +71,13 @@ namespace delphibackend.Shared.Infraestructure.Persistences.EFC.Configuration
             });
 
     // Configuración de la entidad Room
+        builder.Entity<Room>()
+            .Navigation(r => r.Participants)
+            .AutoInclude();
+
             builder.Entity<Room>(room =>
             {
+                
                 room.ToTable("Rooms");
                 room.HasKey(r => r.Id);
                 room.Property(r => r.Id).IsRequired();
@@ -87,9 +92,11 @@ namespace delphibackend.Shared.Infraestructure.Persistences.EFC.Configuration
                     .HasConstraintName("FK_Room_Host");
 
                 room.HasMany(r => r.Participants)
-                    .WithMany(p => p.Rooms)
-                    .UsingEntity(j => j.ToTable("RoomParticipants"));
-
+                    .WithOne()
+                    .HasForeignKey(p => p.RoomId)
+                    .OnDelete(DeleteBehavior.Cascade) // Opcional: elimina los Participants si se elimina la Room
+                    .HasConstraintName("FK_Room_Participants");
+                
                 room.HasOne(r => r.SharedFile)
                     .WithOne()
                     .HasForeignKey<Room>(r => r.SharedFileId)
