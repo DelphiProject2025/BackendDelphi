@@ -1,4 +1,5 @@
-﻿using delphibackend.IAM.Domain.Model.Queries;
+﻿using delphibackend.Delphi.Domain.Model.Queries;
+using delphibackend.IAM.Domain.Model.Queries;
 
 namespace delphibackend.IAM.Domain.Services;
 
@@ -30,4 +31,6 @@ public interface IAuthUserQueryService
      * <returns>The user if found, null otherwise</returns>
      */
     Task<Model.Aggregates.AuthUser?> Handle(GetAuthUserByEmailQuery query);
+    Task<UserRoleResponse?> Handle(GetUserRoleQuery query);
+
 }

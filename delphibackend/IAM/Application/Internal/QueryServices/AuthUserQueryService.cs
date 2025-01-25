@@ -1,4 +1,5 @@
-﻿using delphibackend.IAM.Domain.Model.Queries;
+﻿using delphibackend.Delphi.Domain.Model.Queries;
+using delphibackend.IAM.Domain.Model.Queries;
 using delphibackend.IAM.Domain.Repositories;
 using delphibackend.IAM.Domain.Services;
 
@@ -42,4 +43,38 @@ public class AuthUserQueryService(IAuthUserRepository userRepository) : IAuthUse
     {
         return await userRepository.FindByEmailAsync(query.Email);
     }
+    public async Task<UserRoleResponse?> Handle(GetUserRoleQuery query)
+    {
+        var user = await userRepository.FindByIdAsync(query.AuthUserId);
+
+        if (user == null)
+            return null;
+
+        if (user.Host != null)
+        {
+            return new UserRoleResponse
+            {
+                Role = "Host",
+                Id = user.Host.Id
+            };
+        }
+
+        if (user.Participant != null)
+        {
+            return new UserRoleResponse
+            {
+                Role = "Participant",
+                Id = user.Participant.Id
+            };
+        }
+
+        return new UserRoleResponse
+        {
+            Role = "None",
+            Id = null
+        };
+    }
+
+
+
 }

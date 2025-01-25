@@ -30,12 +30,13 @@ public class AuthUserRepository : BaseRepository<AuthUser>, IAuthUserRepository
     /// </summary>
     /// <param name="id">El ID del usuario</param>
     /// <returns>El usuario si es encontrado</returns>
-    public async Task<AuthUser?> FindByIdAsync(Guid id)
+    public async Task<AuthUser?> FindByIdAsync(Guid authUserId)
     {
-        return await _context.Set<AuthUser>()
-            .FirstOrDefaultAsync(user => user.Id == id);
+        return await _context.AuthUsers
+            .Include(u => u.Participant) // Incluye la relación Participant
+            .Include(u => u.Host)        // Incluye la relación Host
+            .FirstOrDefaultAsync(u => u.Id == authUserId); // Filtra por Id
     }
-
     /// <summary>
     /// Verifica si un usuario existe por su correo electrónico
     /// </summary>

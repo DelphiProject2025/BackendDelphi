@@ -57,6 +57,24 @@ public class AuthUserController(IAuthUserQueryService authUserQueryService, IAut
         return Ok(resource);
     }
   */
+   [HttpGet("{authUserId}/role")]
+   public async Task<IActionResult> GetUserRole(Guid authUserId)
+   {
+       var result = await authUserQueryService.Handle(new GetUserRoleQuery(authUserId));
+
+       if (result == null || result.Role == "None")
+       {
+           return NotFound(new { message = "User not found or role not assigned." });
+       }
+
+       return Ok(new
+       {
+           authUserId,
+           role = result.Role,
+           roleId = result.Id // ID del rol específico
+       });
+   }
+
     
     
 }
