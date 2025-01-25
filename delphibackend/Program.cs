@@ -23,6 +23,7 @@ using Microsoft.OpenApi.Models;
 using System.Text;
 using delphibackend.Delphi.Application.Internal.CommandServices;
 using delphibackend.Delphi.Application.Internal.Queryservices;
+using delphibackend.Delphi.Application.Internal.QueryServices;
 using delphibackend.Delphi.Domain.Model.Repositories;
 using delphibackend.Delphi.Domain.Repositories;
 using delphibackend.Delphi.Domain.Services;
@@ -158,6 +159,9 @@ builder.Services.AddScoped<IRoomRepository, RoomRepository>();
 builder.Services.AddScoped<IRoomQueryService, RoomQueryService>();
 builder.Services.AddScoped<IChatRepository,ChatRepository>();
 builder.Services.AddScoped<IChatCommandService, ChatCommandService>();
+builder.Services.AddScoped<IQuestionRepository, QuestionRepository>();
+builder.Services.AddScoped<IQuestionCommandService, QuestionCommandService>();
+builder.Services.AddScoped<IQuestionQueryService, QuestionQueryService>();
 
 
 

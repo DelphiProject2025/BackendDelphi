@@ -12,9 +12,17 @@ public class ParticipantRepository : BaseRepository<Participant>, IParticipantRe
         return await Context.Set<Participant>().FirstOrDefaultAsync(p => p.AuthUserId == authUserId);
     }
 
-    public async Task<Participant?> FindByIdAsync(Guid participantId)
+    public new async Task<Participant?> FindByIdAsync(Guid participantId)
     {
-        return await Context.Set<Participant>().FirstOrDefaultAsync(p => p.Id == participantId);
+        try
+        {
+            return await Context.Set<Participant>().FirstOrDefaultAsync(p => p.Id == participantId);
+
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+        }
     }
 
     public async Task<IEnumerable<Participant>> FindByRoleAsync(ParticipantRole role)

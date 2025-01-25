@@ -19,15 +19,15 @@ public class Question
 
     public Question(Guid participantId, Guid roomId, string text)
     {
-        if (participant == null)
-        {
-            throw new ArgumentNullException(nameof(participant), "Participant cannot be null.");
-        }
-
-        if (Room == null)
-        {
-            throw new ArgumentNullException(nameof(Room), "Room cannot be null.");
-        }
+        // if (participant == null)
+        // {
+        //     throw new ArgumentNullException(nameof(participant), "Participant cannot be null.");
+        // }
+        //
+        // if (Room == null)
+        // {
+        //     throw new ArgumentNullException(nameof(Room), "Room cannot be null.");
+        // }
         if (string.IsNullOrWhiteSpace(text))
         {
             throw new ArgumentException("Question text cannot be null or empty.", nameof(text));
@@ -41,10 +41,20 @@ public class Question
         Answer = null;
     }
     
-    private Question(){}
+    private Question() { }
     
     public void Like()
     {
         Likes++;
+    }
+
+    public void SetAnswer(string answer)
+    {
+        if (string.IsNullOrWhiteSpace(answer))
+        {
+            throw new ArgumentException("Answer cannot be null or empty.", nameof(answer));
+        }
+
+        Answer = answer;
     }
 }
