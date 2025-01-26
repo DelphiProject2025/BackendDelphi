@@ -162,7 +162,9 @@ builder.Services.AddScoped<IChatCommandService, ChatCommandService>();
 builder.Services.AddScoped<IQuestionRepository, QuestionRepository>();
 builder.Services.AddScoped<IQuestionCommandService, QuestionCommandService>();
 builder.Services.AddScoped<IQuestionQueryService, QuestionQueryService>();
-
+builder.Services.AddScoped<IPollRepository, PollRepository>();
+builder.Services.AddScoped<IPollCommandService, PollCommandService>();
+builder.Services.AddScoped<IPollQueryService, PollQueryService>();
 
 
 
