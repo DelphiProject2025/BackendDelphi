@@ -18,7 +18,7 @@ public class ChatRepository : IChatRepository
     // Método personalizado para obtener un chat por RoomId
     public async Task<Chat?> GetByRoomIdAsync(Guid roomId)
     {
-        return await _context.Chats.FirstOrDefaultAsync(c => c.RoomId == roomId);
+        return await _context.Chats.FirstOrDefaultAsync(c => c.Id == roomId);
     }
 
     // Implementación del método AddAsync
