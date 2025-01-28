@@ -10,7 +10,7 @@ public static class QuestionResourceAssembler
         return new QuestionResource
         {
             Id = question.Id,
-            UserId = question.ParticipantId,
+            ParticipantId  = question.ParticipantId,
             RoomId = question.RoomId,
             Text = question.Text,
             Likes = question.Likes,

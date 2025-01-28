@@ -5,6 +5,9 @@ namespace delphibackend.Delphi.Domain.Services
 {
     public interface ISharedFileQueryService
     {
-        Task<(byte[]?, IReadOnlyList<Question?>)> Handle(GetSharedFileByRoomIdQuery query);
+        Task<byte[]?> Handle(GetSharedFileByRoomIdQuery query);
+        Task<SharedFile?> Handle(GetSharedContentByIdQuery query);
+        Task<SharedFile?> Handle(GetSharedContentDetailsQuery query);
+        Task<(byte[]?, IReadOnlyList<Question>?)> Handle(GetSharedFileWithQuestionsByRoomIdQuery query);
     }
-}
+    }

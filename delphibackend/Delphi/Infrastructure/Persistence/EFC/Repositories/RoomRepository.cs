@@ -10,23 +10,39 @@ namespace delphibackend.Delphi.Infrastructure.Persistence.EFC.Repositories;
 
 public class RoomRepository(AppDbContext context) : BaseRepository<Room>(context), IRoomRepository
 {
-
     // Find Room by Id
     public new async Task<Room?> FindByIdAsync(Guid roomId) =>
         await context.Set<Room>().FirstOrDefaultAsync(r => r.Id == roomId);
-
-
     // Find Room by Name
     public async Task<Room?> FindByNameAsync(string roomName)
     {
-        return await context.Rooms
+        return await Context.Rooms
             .FirstOrDefaultAsync(r => r.RoomName == roomName);
+    }
+
+    public async Task<(byte[]?, IReadOnlyList<Question>?)> FindSharedFileQuestionsAsync(Guid id)
+    {
+        var room = await Context.Set<Room>()
+            .Include(r => r.Questions)  // Incluir las preguntas relacionadas
+            .FirstOrDefaultAsync(r => r.Id == id);
+
+        if (room == null)
+        {
+            return (null, new List<Question>().AsReadOnly());
+        }
+
+        // Cargar la referencia del archivo compartido si es necesario
+        await Context.Entry(room)
+            .Reference(r => r.SharedFile)
+            .LoadAsync();
+
+        return (room.SharedFile?.Content, room.Questions);
     }
 
     // Get Room with Users
     public async Task<Room?> GetRoomWithHostsAsync(Guid roomId)
     {
-        return await context.Rooms
+        return await Context.Rooms
             .Include(r => r.Host)
             .FirstOrDefaultAsync(r => r.Id == roomId);
     }
@@ -34,14 +50,15 @@ public class RoomRepository(AppDbContext context) : BaseRepository<Room>(context
     // Get Participants by Room Id
     public async Task<IEnumerable<Participant>> GetParticipantsByRoomIdAsync(Guid roomId)
     {
-        return await context.Rooms
+        return await Context.Rooms
             .Where(r => r.Id == roomId)
             .SelectMany(r => r.Participants)
             .ToListAsync();
     }
+
     // Save changes to the database
     public async Task SaveAsync()
     {
-        await context.SaveChangesAsync();
+        await Context.SaveChangesAsync();
     }
 }

@@ -165,6 +165,9 @@ builder.Services.AddScoped<IQuestionQueryService, QuestionQueryService>();
 builder.Services.AddScoped<IPollRepository, PollRepository>();
 builder.Services.AddScoped<IPollCommandService, PollCommandService>();
 builder.Services.AddScoped<IPollQueryService, PollQueryService>();
+builder.Services.AddScoped<ISharedFileRepository, SharedFileRepository>();
+builder.Services.AddScoped<ISharedFileQueryService, SharedFileQueryService>();
+builder.Services.AddScoped<ISharedFileCommandService, SharedFileCommandService>();
 
 
 
