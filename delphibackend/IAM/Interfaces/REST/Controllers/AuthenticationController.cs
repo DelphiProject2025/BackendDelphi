@@ -9,7 +9,7 @@ namespace delphibackend.IAM.Interfaces.REST.Controllers;
 
 [Authorize]
 [ApiController]
-[Route("delphibackend/[controller]")]
+[Route("api/v1/[controller]")]
 [Produces(MediaTypeNames.Application.Json)]
 public class AuthenticationController(IAuthUserCommandService userCommandService) : ControllerBase
 {

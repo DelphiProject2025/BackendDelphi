@@ -9,7 +9,7 @@ public class AuthUser(string email, string passwordHash,string name,string phone
 
 {
 
-    public AuthUser(): this(string.Empty, string.Empty,string.Empty,string.Empty,DateTime.Now){}
+    public AuthUser(): this(string.Empty, string.Empty,string.Empty,string.Empty,DateTime.UtcNow){}
     
     public Guid Id { get; }
     
