@@ -74,17 +74,24 @@ public class RoomCommandService(
     }
 
 
-    public async Task<Room?> Handle(EndRoomCommand command)
+    public async Task<bool> Handle(EndRoomCommand command)
     {
         var room = await _roomRepository.FindByIdAsync(command.RoomId);
         if (room == null)
             throw new Exception("Room not found");
 
+        // Finaliza la sala
         room.EndRoom();
-        await _roomRepository.UpdateAsync(room);
+
+        // Elimina la sala del repositorio
+        await _roomRepository.DeleteAsync(room.Id);
         await unitOfWork.CompleteAsync();
-        return room;
+
+        return true; // Indica que la operación fue exitosa
     }
+
+    
+    
     public async Task<Room?> Handle(AddHostToRoomCommand command)
     {
         // Buscar la sala

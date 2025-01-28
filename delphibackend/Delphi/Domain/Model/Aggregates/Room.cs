@@ -33,6 +33,7 @@ public class Room
     {
         Id = Guid.NewGuid();
         RoomName = name;
+        Chat = new Chat();
         Password = GenerateRandomPassword();
         Host = host;
         HostId = host.Id;

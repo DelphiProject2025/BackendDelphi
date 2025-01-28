@@ -86,10 +86,11 @@ namespace delphibackend.Shared.Infraestructure.Persistences.EFC.Configuration
                 room.Property(r => r.HostId).IsRequired();
 
                 room.HasOne(r => r.Host)
-                    .WithMany()
-                    .HasForeignKey(r => r.HostId)
-                    .OnDelete(DeleteBehavior.Restrict)
+                    .WithOne(h => h.Room) // ✅ Si Host NO tiene una propiedad Room
+                    .HasForeignKey<Host>(h => h.RoomId) // La clave foránea debe estar en Host
+                    .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("FK_Room_Host");
+
 
                 room.HasMany(r => r.Participants)
                     .WithOne()
@@ -121,11 +122,6 @@ namespace delphibackend.Shared.Infraestructure.Persistences.EFC.Configuration
                     .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("FK_Room_SessionRecording");
                 
-                room.HasOne(r => r.Chat)
-                    .WithOne(c => c.Room) // Define la propiedad inversa en Chat
-                    .HasForeignKey<Room>(r => r.ChatId)
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .HasConstraintName("FK_Room_Chat");
             });
             
             // Configuración de la entidad Chat
@@ -134,13 +130,7 @@ namespace delphibackend.Shared.Infraestructure.Persistences.EFC.Configuration
                 chat.ToTable("Chats");
                 chat.HasKey(c => c.Id);
                 chat.Property(c => c.Id).IsRequired();
-
-                // Relación uno a uno con Room
-                chat.HasOne(c => c.Room)
-                    .WithOne(r => r.Chat)
-                    .HasForeignKey<Chat>(c => c.RoomId)
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .HasConstraintName("FK_Chat_Room");
+                
             });
             
             // Configuración de la entidad Question

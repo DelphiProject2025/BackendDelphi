@@ -49,14 +49,13 @@ public class RoomController(IRoomCommandService roomCommandService, IRoomQuerySe
         return Ok(resource);
     }
 
-    [HttpPut("end/{roomId:guid}")]
+    [HttpDelete("end/{roomId:guid}")]
     public async Task<IActionResult> EndRoomSession([FromRoute] Guid roomId)
     {
         var endRoomCommand = new EndRoomCommand(roomId);
-        var room = await roomCommandService.Handle(endRoomCommand);
-        if (room is null) return BadRequest();
-        var resource = RoomResourceFromEntityAssembler.ToResourceFromEntity(room);
-        return Ok(resource);
+        var result = await roomCommandService.Handle(endRoomCommand);
+        if (!result) return BadRequest();
+        return NoContent();
     }
 
     [HttpPut("start/{roomId:guid}")]
