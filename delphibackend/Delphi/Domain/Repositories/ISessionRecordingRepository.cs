@@ -1,6 +1,12 @@
-﻿namespace delphibackend.Delphi.Domain.Repositories;
+﻿using delphibackend.Delphi.Domain.Model.Entities;
+using delphibackend.Shared.Domain.Repositories;
 
-public class ISessionRecordingRepository
+
+namespace delphibackend.Delphi.Domain.Repositories
 {
-    
+    public interface ISessionRecordingRepository : IBaseRepository<SessionRecording>
+    {
+        Task<IEnumerable<SessionRecording>> GetSessionRecordingsByRoomIdAsync(Guid roomId);
+        Task<SessionRecording?> GetByIdAsync(Guid sessionRecordingId);
+    }
 }
