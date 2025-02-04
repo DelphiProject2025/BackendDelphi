@@ -7,6 +7,6 @@ public class AddParticipantToRoomCommandFromResourceAssembler
 {
     public static AddParticipantToRoomCommand ToCommandFromResource(AddParticipantToRoomResource addParticipantToRoomResource, Guid participantId)
     {
-        return new AddParticipantToRoomCommand(addParticipantToRoomResource.RoomId, participantId);
+        return new AddParticipantToRoomCommand(addParticipantToRoomResource.password, participantId);
     }
 }

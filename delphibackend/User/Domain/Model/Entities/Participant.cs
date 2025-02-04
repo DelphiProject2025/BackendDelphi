@@ -1,4 +1,5 @@
-﻿    using delphibackend.Delphi.Domain.Model.Aggregates;
+﻿    using System.Text.Json.Serialization;
+    using delphibackend.Delphi.Domain.Model.Aggregates;
     using delphibackend.IAM.Domain.Model.Aggregates;
 
     namespace delphibackend.User.Domain.Model.Entities;
@@ -32,6 +33,7 @@
         public Guid Id { get; set; } // Identificador único = Guid.NewGuid();
         public Guid AuthUserId { get; set; } // Identificador del Usuario
 
+        [JsonIgnore]
         public AuthUser? AuthUser { get; set; } // Nullable para evitar errores de referencia nula
         public string DisplayName => IsAnonymous || AuthUser == null ? "Anonymous" : AuthUser.Name;     
         public ParticipantRole Role { get; set; } // Rol dentro de la sesión

@@ -168,6 +168,7 @@ builder.Services.AddScoped<IPollQueryService, PollQueryService>();
 builder.Services.AddScoped<ISharedFileRepository, SharedFileRepository>();
 builder.Services.AddScoped<ISharedFileQueryService, SharedFileQueryService>();
 builder.Services.AddScoped<ISharedFileCommandService, SharedFileCommandService>();
+builder.Services.AddHttpContextAccessor();
 
 
 

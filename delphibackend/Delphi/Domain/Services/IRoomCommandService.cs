@@ -14,7 +14,6 @@ public interface IRoomCommandService
     Task<bool> Handle(EndRoomCommand command);
     Task<Room?> Handle(StartRoomCommand command);
     Task<Room?> Handle(AddParticipantToRoomCommand command);
-    Task<Room?> Handle(AddHostToRoomCommand command);
 
 
     

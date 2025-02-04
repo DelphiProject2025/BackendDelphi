@@ -20,6 +20,12 @@ public class RoomRepository(AppDbContext context) : BaseRepository<Room>(context
             .FirstOrDefaultAsync(r => r.RoomName == roomName);
     }
 
+    public async Task<Room?> FindByPasswordAsync(string password)
+    {
+        return await Context.Rooms
+            .FirstOrDefaultAsync(r => r.Password == password);
+    }
+
     public async Task<(byte[]?, IReadOnlyList<Question>?)> FindSharedFileQuestionsAsync(Guid id)
     {
         var room = await Context.Set<Room>()

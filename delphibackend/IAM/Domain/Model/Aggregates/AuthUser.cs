@@ -35,6 +35,7 @@ public class AuthUser(string email, string passwordHash,string name,string phone
         return this;
     }
     
+  
     public Aggregates_Host? Host { get; internal set; }
     public Participant? Participant { get; internal set; }
 

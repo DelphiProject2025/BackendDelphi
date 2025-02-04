@@ -4,21 +4,24 @@ using delphibackend.Delphi.Domain.Model.Commands;
 using delphibackend.Delphi.Domain.Model.Queries;
 using delphibackend.Delphi.Interfaces.Resources;
 using delphibackend.Delphi.Interfaces.Transform;
+using delphibackend.IAM.Interfaces.REST.Controllers;
 
 namespace delphibackend.Delphi.Interfaces.Controllers;
 
 [ApiController]
 [Route("api/v1/[controller]")]
-public class RoomController(IRoomCommandService roomCommandService, IRoomQueryService roomQueryService) : ControllerBase
+public class RoomController(IRoomCommandService roomCommandService, IRoomQueryService roomQueryService) : BaseController
 {
     [HttpPost]
     public async Task<IActionResult> CreateRoom([FromBody] CreateRoomResource createRoomResource)
     {
-        var createRoomCommand = CreateRoomCommandFromResourceAssembler.ToCommandFromResource(createRoomResource);
+        var authUserId = GetAuthenticatedUserId(); // 🔥 Obtiene el ID desde el JWT
+
+        var createRoomCommand = CreateRoomCommandFromResourceAssembler.ToCommandFromResource(createRoomResource, authUserId);
         var room = await roomCommandService.Handle(createRoomCommand);
         if (room is null) return BadRequest();
-        var resource = RoomResourceFromEntityAssembler.ToResourceFromEntity(room);
-        return CreatedAtAction(nameof(GetRoomById), new { roomId = resource.Id }, resource);
+    
+        return CreatedAtAction(nameof(GetRoomById), new { roomId = room.Id }, room);
     }
 
     [HttpGet("{roomId:guid}")]

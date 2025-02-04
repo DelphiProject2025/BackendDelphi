@@ -5,8 +5,8 @@ namespace delphibackend.Delphi.Interfaces.Transform;
 
 public class CreateRoomCommandFromResourceAssembler
 {
-    public static CreateRoomCommand ToCommandFromResource(CreateRoomResource resource)
+    public static CreateRoomCommand ToCommandFromResource(CreateRoomResource resource, Guid authUserId)
     {
-        return new CreateRoomCommand(resource.RoomName, resource.HostId);
+        return new CreateRoomCommand(resource.RoomName, authUserId);
     }
 }

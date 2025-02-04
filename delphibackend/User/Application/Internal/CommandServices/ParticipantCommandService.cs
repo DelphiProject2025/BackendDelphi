@@ -3,6 +3,7 @@ using delphibackend.User.Domain.Services;
 using delphibackend.Shared.Domain.Repositories;
 using System;
 using System.Threading.Tasks;
+using delphibackend.IAM.Domain.Repositories;
 
 namespace delphibackend.User.Application.Internal.CommandServices
 {
@@ -10,11 +11,13 @@ namespace delphibackend.User.Application.Internal.CommandServices
     {
         private readonly IParticipantRepository _participantRepository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IAuthUserRepository _authUserRepository;
 
-        public ParticipantCommandService(IParticipantRepository participantRepository, IUnitOfWork unitOfWork)
+        public ParticipantCommandService(IParticipantRepository participantRepository, IUnitOfWork unitOfWork, IAuthUserRepository authUserRepository)
         {
             _participantRepository = participantRepository;
             _unitOfWork = unitOfWork;
+            _authUserRepository = authUserRepository;
         }
 
         // Método para activar participante anónimo
@@ -44,9 +47,14 @@ namespace delphibackend.User.Application.Internal.CommandServices
         // Otros métodos existentes
         public async Task<Participant?> CreateParticipantAsync(Guid authUserId, ParticipantRole role, bool isAnonymous)
         {
+            // Buscar el AuthUser antes de crear el Participant
+            var authUser = await _authUserRepository.FindByIdAsync(authUserId);
+            if (authUser == null) return null; // Si no existe el usuario, retorna null
+
             var participant = new Participant
             {
                 AuthUserId = authUserId,
+                AuthUser = authUser, // 🔥 Asignar el objeto completo
                 Role = role,
                 IsAnonymous = isAnonymous,
                 IsActive = true,

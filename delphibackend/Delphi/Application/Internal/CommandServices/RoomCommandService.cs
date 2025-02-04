@@ -1,4 +1,5 @@
-﻿using delphibackend.Delphi.Domain.Model.Aggregates;
+﻿using System.Security.Claims;
+using delphibackend.Delphi.Domain.Model.Aggregates;
 using delphibackend.Delphi.Domain.Model.Entities;
 using delphibackend.Delphi.Domain.Model.Commands;
 using delphibackend.Delphi.Domain.Repositories;
@@ -7,6 +8,7 @@ using delphibackend.IAM.Domain.Repositories;
 using delphibackend.Shared.Domain.Repositories;
 using delphibackend.User.Domain.Model.Entities;
 using delphibackend.User.Domain.Repositories;
+using Host = delphibackend.User.Domain.Model.Entities.Host;
 
 namespace delphibackend.Delphi.Application.Internal.CommandServices;
 
@@ -15,24 +17,62 @@ public class RoomCommandService(
     IAuthUserRepository _authUserRepository,
     IHostRepository _hostRepository,
     IParticipantRepository _participantRepository,
+    IHttpContextAccessor _httpContextAccessor, // <- Inyectar HttpContext
+
     
     IUnitOfWork unitOfWork
     ) : IRoomCommandService
 {
-    public async Task<Room?> Handle(CreateRoomCommand command)
+    private Guid GetAuthenticatedUserId()
     {
-        // Usa HostRepository para buscar el host
-        var host = await _hostRepository.FindByIdAsync(command.HostId);
-        if (host == null)
+        var httpContext = _httpContextAccessor.HttpContext;
+        if (httpContext == null)
         {
-            throw new Exception("Host not found");
+            Console.WriteLine("⚠️ No se encontró el HttpContext.");
+            throw new UnauthorizedAccessException("No se encontró el contexto HTTP.");
         }
 
+        Console.WriteLine("🔹 HttpContext encontrado.");
+
+        foreach (var claim in httpContext.User.Claims)
+        {
+            Console.WriteLine($"Claim Type: {claim.Type}, Value: {claim.Value}");
+        }
+
+        var userIdClaim = httpContext.User.FindFirst(ClaimTypes.Sid);
+        if (userIdClaim == null)
+        {
+            Console.WriteLine("⚠️ No se encontró el Claim NameIdentifier.");
+            throw new UnauthorizedAccessException("Token inválido o expirado.");
+        }
+
+        Console.WriteLine($"✅ UserId obtenido: {userIdClaim.Value}");
+        return Guid.Parse(userIdClaim.Value);
+    }
+
+    public async Task<Room?> Handle(CreateRoomCommand command)
+    {
+        var authUserId = GetAuthenticatedUserId(); // Obtiene el ID del usuario autenticado
+
+        // Busca si el usuario ya tiene un Host asignado
+        var host = await _hostRepository.FindByAuthUserIdAsync(authUserId);
+
+        // Si el Host no existe, lo crea automáticamente
+        if (host == null)
+        {
+            host = new Host() { AuthUserId = authUserId, IsActive = true, CreatedAt = DateTime.UtcNow };
+            await _hostRepository.AddAsync(host);
+            await unitOfWork.CompleteAsync();
+        }
+
+        // Crear la Room asociada al Host
         var room = new Room(command.RoomName, host);
         await _roomRepository.AddAsync(room);
         await unitOfWork.CompleteAsync();
+
         return room;
     }
+
     
 
     public async Task<Room?> Handle(StartRoomCommand command)
@@ -50,7 +90,7 @@ public class RoomCommandService(
     public async Task<Room?> Handle(AddParticipantToRoomCommand command)
     {
         // Buscar la sala
-        var room = await _roomRepository.FindByIdAsync(command.RoomId);
+        var room = await _roomRepository.FindByPasswordAsync(command.password);
         if (room == null)
             throw new KeyNotFoundException("Room not found");
 
@@ -92,30 +132,6 @@ public class RoomCommandService(
 
     
     
-    public async Task<Room?> Handle(AddHostToRoomCommand command)
-    {
-        // Buscar la sala
-        var room = await _roomRepository.FindByIdAsync(command.RoomId);
-        if (room == null)
-            throw new Exception("Room not found");
-
-        // Buscar el usuario autenticado que será el Host
-        var authUser = await _authUserRepository.FindByIdAsync(command.HostId);
-        if (authUser == null)
-            throw new Exception("AuthUser not found");
-
-        // Crear una nueva instancia de Host usando el constructor
-        var host = new delphibackend.User.Domain.Model.Entities.Host(authUser);
-
-        // Asignar el Host a la sala
-        room.Host = host;
-
-        // Guardar cambios
-        await _roomRepository.UpdateAsync(room);
-        await unitOfWork.CompleteAsync();
-
-        return room;
-    }
 
 
 

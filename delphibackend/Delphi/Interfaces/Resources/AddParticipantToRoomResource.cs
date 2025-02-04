@@ -1,4 +1,4 @@
 ﻿namespace delphibackend.Delphi.Interfaces.Resources;
 
  
- public record AddParticipantToRoomResource(Guid RoomId);
+ public record AddParticipantToRoomResource(string password);

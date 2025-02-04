@@ -69,11 +69,23 @@ namespace delphibackend.Shared.Infraestructure.Persistences.EFC.Configuration
                     .HasForeignKey<Participant>(p => p.AuthUserId)
                     .HasPrincipalKey<AuthUser>(a => a.Id);
             });
+        builder.Entity<Participant>()
+                .Navigation(p => p.AuthUser)
+                .AutoInclude();
+        builder.Entity<Host>()
+            .Navigation(p => p.AuthUser)
+            .AutoInclude();
+
+
+        builder.Entity<Room>()
+            .Navigation(r => r.Chat)
+            .AutoInclude();
 
     // Configuración de la entidad Room
         builder.Entity<Room>()
             .Navigation(r => r.Participants)
             .AutoInclude();
+        
 
             builder.Entity<Room>(room =>
             {
