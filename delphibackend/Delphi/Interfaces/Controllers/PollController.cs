@@ -3,10 +3,12 @@ using delphibackend.Delphi.Application.Internal.CommandServices;
 using delphibackend.Delphi.Application.Internal.QueryServices;
 using delphibackend.Delphi.Domain.Model.Commands;
 using delphibackend.Delphi.Domain.Services;
+using delphibackend.IAM.Infraestructure.Pipeline.Middleware.Attributes;
 
 namespace delphibackend.Delphi.Api.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("api/[controller]")]
 public class PollController : ControllerBase
 {

@@ -1,4 +1,5 @@
-﻿using System.Security.Claims;
+﻿using System.Runtime.InteropServices.JavaScript;
+using System.Security.Claims;
 using delphibackend.Delphi.Domain.Model.Aggregates;
 using delphibackend.Delphi.Domain.Model.Entities;
 using delphibackend.Delphi.Domain.Model.Commands;
@@ -89,20 +90,27 @@ public class RoomCommandService(
 
     public async Task<Room?> Handle(AddParticipantToRoomCommand command)
     {
+        var authUserId = GetAuthenticatedUserId(); // Obtiene el ID del usuario autenticado
+
+
         // Buscar la sala
         var room = await _roomRepository.FindByPasswordAsync(command.password);
         if (room == null)
             throw new KeyNotFoundException("Room not found");
 
         // Buscar el participante por ID
-        var participant = await _participantRepository.FindByIdAsync(command.ParticipantId);
+        var participant = await _participantRepository.FindByAuthUserIdAsync(authUserId);
         if (participant == null)
-            throw new KeyNotFoundException("Participant not found");
-
+        {
+            participant = new Participant{AuthUserId = authUserId,IsActive = true,IsAnonymous = false,JoinedAt = DateTime.UtcNow,Role = ParticipantRole.Contributor};
+            await _participantRepository.AddAsync(participant);
+            await unitOfWork.CompleteAsync();
+        }
+            
         // Verificar si el participante ya existe en la sala
         if (room.Participants.Any(p => p.Id == participant.Id))
             throw new InvalidOperationException("Participant is already in the room.");
-
+        
         // Asociar el participante existente a la sala
         room.Participants.Add(participant);
 

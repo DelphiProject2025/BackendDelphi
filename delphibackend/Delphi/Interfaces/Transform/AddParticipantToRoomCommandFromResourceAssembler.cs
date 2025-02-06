@@ -5,8 +5,8 @@ namespace delphibackend.Delphi.Interfaces.Transform;
 
 public class AddParticipantToRoomCommandFromResourceAssembler
 {
-    public static AddParticipantToRoomCommand ToCommandFromResource(AddParticipantToRoomResource addParticipantToRoomResource, Guid participantId)
+    public static AddParticipantToRoomCommand ToCommandFromResource(AddParticipantToRoomResource addParticipantToRoomResource, Guid hostId)
     {
-        return new AddParticipantToRoomCommand(addParticipantToRoomResource.password, participantId);
+        return new AddParticipantToRoomCommand(addParticipantToRoomResource.password, hostId);
     }
 }

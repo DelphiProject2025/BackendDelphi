@@ -3,12 +3,15 @@ using delphibackend.Delphi.Domain.Model.Queries;
 using delphibackend.Delphi.Domain.Services;
 using delphibackend.Delphi.Interfaces.Resources;
 using delphibackend.Delphi.Interfaces.Transform;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace delphibackend.Delphi.Interfaces.Controllers;
 
 
 [ApiController]
+[Authorize]
+
 [Route("api/[controller]")]
 public class QuestionController : ControllerBase
 {

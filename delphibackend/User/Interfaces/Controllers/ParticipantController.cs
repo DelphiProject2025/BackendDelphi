@@ -1,4 +1,5 @@
-﻿using delphibackend.User.Domain.Model.Entities;
+﻿using delphibackend.IAM.Infraestructure.Pipeline.Middleware.Attributes;
+using delphibackend.User.Domain.Model.Entities;
 using delphibackend.User.Domain.Services;
 using delphibackend.User.Interfaces.Resources;
 using Microsoft.AspNetCore.Mvc;
@@ -6,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace delphibackend.User.Interfaces.Controllers
 {
     [ApiController]
+    [Authorize]
+
     [Route("api/v1/[controller]")]
     public class ParticipantController : ControllerBase
     {
@@ -34,19 +37,7 @@ namespace delphibackend.User.Interfaces.Controllers
             return Ok(participant);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> CreateParticipant([FromBody] CreateParticipantResource resource)
-        {
-            if (!ModelState.IsValid) return BadRequest(ModelState);
-
-            var participant = await _participantCommandService.CreateParticipantAsync(
-                resource.AuthUserId, resource.Role, resource.IsAnonymous);
-
-            if (participant == null) 
-                return BadRequest(new { message = "Failed to create participant." });
-
-            return CreatedAtAction(nameof(GetParticipantById), new { participantId = participant.Id }, participant);
-        }
+       
 
         [HttpPut("{participantId}/role")]
         public async Task<IActionResult> UpdateParticipantRole(Guid participantId, [FromBody] UpdateParticipantResource resource)

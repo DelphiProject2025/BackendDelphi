@@ -4,11 +4,14 @@ using delphibackend.Delphi.Domain.Model.Commands;
 using delphibackend.Delphi.Domain.Model.Queries;
 using delphibackend.Delphi.Interfaces.Resources;
 using delphibackend.Delphi.Interfaces.Transform;
+using delphibackend.IAM.Infraestructure.Pipeline.Middleware.Attributes;
 using delphibackend.IAM.Interfaces.REST.Controllers;
 
 namespace delphibackend.Delphi.Interfaces.Controllers;
 
 [ApiController]
+[Authorize]
+
 [Route("api/v1/[controller]")]
 public class RoomController(IRoomCommandService roomCommandService, IRoomQueryService roomQueryService) : BaseController
 {
@@ -41,11 +44,13 @@ public class RoomController(IRoomCommandService roomCommandService, IRoomQuerySe
         return Ok(resources);
     }
 
-    [HttpPost("{participantId:guid}")]
-    public async Task<IActionResult> AddUserToRoom([FromBody] AddParticipantToRoomResource addParticipantToRoomResource, [FromRoute] Guid participantId)
+    [HttpPost("joinRoom")]
+    public async Task<IActionResult> AddUserToRoom([FromBody] AddParticipantToRoomResource addParticipantToRoomResource)
     {
+        var authUserId = GetAuthenticatedUserId(); // 🔥 Obtiene el ID desde el JWT
+
         var addParticipantCommand = AddParticipantToRoomCommandFromResourceAssembler
-            .ToCommandFromResource(addParticipantToRoomResource, participantId);
+            .ToCommandFromResource(addParticipantToRoomResource, authUserId);
         var room = await roomCommandService.Handle(addParticipantCommand);
         if (room is null) return BadRequest();
         var resource = RoomResourceFromEntityAssembler.ToResourceFromEntity(room);

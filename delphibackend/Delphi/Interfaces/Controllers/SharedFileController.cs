@@ -2,10 +2,12 @@
 using delphibackend.Delphi.Domain.Model.Queries;
 using delphibackend.Delphi.Domain.Services;
 using delphibackend.Delphi.Interfaces.Transform;
+using delphibackend.IAM.Infraestructure.Pipeline.Middleware.Attributes;
 
 namespace delphibackend.Delphi.Interfaces.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("api/v1/[controller]")]
 public class SharedFileController : ControllerBase
 {

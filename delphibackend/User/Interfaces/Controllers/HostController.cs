@@ -3,11 +3,14 @@ using delphibackend.User.Application.Internal.CommandServices;
 using delphibackend.User.Domain.Services;
 using delphibackend.User.Interfaces.Resources;
 using delphibackend.User.Interfaces.Transform;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace delphibackend.User.Interfaces.Controllers
 {
     [ApiController]
+    [Authorize]
+
     [Route("api/v1/[controller]")]
     public class HostController : ControllerBase
     {
@@ -20,12 +23,7 @@ namespace delphibackend.User.Interfaces.Controllers
             _hostQueryService = hostQueryService;
         }
 
-        [HttpPost]
-        public async Task<IActionResult> CreateHost([FromBody] CreateHostResource resource)
-        {
-            var host = await _hostCommandService.CreateHostAsync(resource.AuthUserId);
-            return CreatedAtAction(nameof(GetHostById), new { id = host.Id }, host);
-        }
+       
 
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetHostById(Guid id)

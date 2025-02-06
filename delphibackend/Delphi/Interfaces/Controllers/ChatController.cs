@@ -5,10 +5,13 @@ using delphibackend.Delphi.Domain.Model.Commands;
 using delphibackend.Delphi.Domain.Services;
 using delphibackend.Delphi.Interfaces.Hubs;
 using delphibackend.Delphi.Interfaces.Resources;
+using Microsoft.AspNetCore.Authorization;
 
 namespace delphibackend.Delphi.Interfaces.Controllers;
 
 [ApiController]
+[Authorize]
+
 [Route("api/v1/[controller]")]
 public class ChatController : ControllerBase
 {

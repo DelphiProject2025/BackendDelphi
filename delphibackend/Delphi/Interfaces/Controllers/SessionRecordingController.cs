@@ -6,10 +6,12 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using delphibackend.Delphi.Domain.Services;
+using delphibackend.IAM.Infraestructure.Pipeline.Middleware.Attributes;
 
 namespace delphibackend.Delphi.Interfaces.Controllers;
 
     [ApiController]
+    [Authorize]
     [Route("api/[controller]")]
     public class SessionRecordingController : ControllerBase
     {

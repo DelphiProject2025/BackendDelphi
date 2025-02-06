@@ -27,6 +27,7 @@
             IsActive = true; // Configurar como activo por defecto
             Role = ParticipantRole.Contributor;
             IsAnonymous = false;
+            JoinedAt = DateTime.UtcNow;
 
         }
         
