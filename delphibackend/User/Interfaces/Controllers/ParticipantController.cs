@@ -2,6 +2,7 @@
 using delphibackend.User.Domain.Model.Entities;
 using delphibackend.User.Domain.Services;
 using delphibackend.User.Interfaces.Resources;
+using delphibackend.User.Interfaces.Transform.Participant;
 using Microsoft.AspNetCore.Mvc;
 
 namespace delphibackend.User.Interfaces.Controllers
@@ -105,5 +106,21 @@ namespace delphibackend.User.Interfaces.Controllers
             var isActive = await _participantQueryService.IsUserAnActiveParticipantAsync(authUserId);
             return Ok(new { isActive });
         }
+        [HttpPut("{participantId}/display-name")]
+        public async Task<IActionResult> UpdateParticipantDisplayName(Guid participantId, [FromBody] UpdateDisplayNameResource request)
+        {
+            var participant = await _participantQueryService.GetParticipantByIdAsync(participantId);
+            if (participant == null) return NotFound(new { message = "Participant not found." });
+
+            // Aplica el cambio usando el ensamblador
+            UpdateDisplayNameFromResourceAssembler.ApplyToParticipant(participant, request);
+    
+            // Usa el nuevo método para actualizar el participante
+            var success = await _participantCommandService.UpdateParticipantAsync(participant);
+            if (!success) return BadRequest(new { message = "Failed to update Participant." });
+
+            return Ok(new { message = "Participant updated successfully." });
+        }
+
     }
 }

@@ -3,6 +3,7 @@ using delphibackend.User.Application.Internal.CommandServices;
 using delphibackend.User.Domain.Services;
 using delphibackend.User.Interfaces.Resources;
 using delphibackend.User.Interfaces.Transform;
+using delphibackend.User.Interfaces.Transform.Participant;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -61,5 +62,18 @@ namespace delphibackend.User.Interfaces.Controllers
 
             return Ok(new { message = "Host deleted successfully." });
         }
+        [HttpPut("{id}/display-name")]
+        public async Task<IActionResult> UpdateHostDisplayName(Guid id, [FromBody] UpdateDisplayNameResource request)
+        {
+            var host = await _hostQueryService.GetHostByIdAsync(id);
+            if (host == null) return NotFound("Host not found");
+
+            UpdateDisplayNameFromResourceAssembler.ApplyToHost(host, request);
+            var success = await _hostCommandService.UpdateHostAsync(host);
+            if (!success) return BadRequest("Failed to update Host.");
+
+            return Ok(host);
+        }
+
     }
 }

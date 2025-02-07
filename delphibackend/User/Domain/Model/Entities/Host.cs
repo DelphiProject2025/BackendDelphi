@@ -33,5 +33,7 @@ public class Host
    [JsonIgnore] public AuthUser? AuthUser { get; set; }
    [JsonIgnore] public Room? Room { get; set; }
     public Guid? RoomId { get; set; }
+    public string DisplayName { get; set; } = "Host"; 
+
 
 }

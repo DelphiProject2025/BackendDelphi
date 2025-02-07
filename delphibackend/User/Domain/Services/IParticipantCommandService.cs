@@ -11,6 +11,8 @@ namespace delphibackend.User.Domain.Services
         Task<bool> ActivateParticipantAsync(Guid participantId);
         Task<bool> ActivateAnonymousAsync(Guid participantId);
         Task<bool> DeactivateAnonymousAsync(Guid participantId);
+        Task<bool> UpdateParticipantAsync(Participant participant);
+
     }
 }
 

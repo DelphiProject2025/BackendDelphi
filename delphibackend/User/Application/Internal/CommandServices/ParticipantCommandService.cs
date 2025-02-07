@@ -101,5 +101,17 @@ namespace delphibackend.User.Application.Internal.CommandServices
             await _unitOfWork.CompleteAsync();
             return true;
         }
+        public async Task<bool> UpdateParticipantAsync(Participant participant)
+        {
+            var existingParticipant = await _participantRepository.FindByIdAsync(participant.Id);
+            if (existingParticipant == null) return false;
+
+            // Solo actualiza el displayName
+            existingParticipant.DisplayName = participant.DisplayName;
+
+            await _unitOfWork.CompleteAsync();
+            return true;
+        }
+
     }
 }

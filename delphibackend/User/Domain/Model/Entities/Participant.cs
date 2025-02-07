@@ -36,7 +36,7 @@
 
         [JsonIgnore]
         public AuthUser? AuthUser { get; set; } // Nullable para evitar errores de referencia nula
-        public string DisplayName => IsAnonymous || AuthUser == null ? "Anonymous" : AuthUser.Name;     
+        public string DisplayName { get; set; } = "Anonymous";
         public ParticipantRole Role { get; set; } // Rol dentro de la sesión
         public bool IsAnonymous { get; set; } // Si participa de forma anónima
         public bool IsActive { get; set; } // Estado del participante
